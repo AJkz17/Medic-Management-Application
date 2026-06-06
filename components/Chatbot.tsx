@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 
-
+// This will be called inside the dashbpard instead of layout.tsx 
 
 const Chatbot = () => {
 
