@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: image("background.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+/* Card Hover styles */
+.card-hover-effect {
+  transition: all 0.3s ease-in-out !important;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.card-hover-effect:hover {
+  /* Slightly grey background */
+  background-color: #f8f9fa !important; 
+  /* Lift the card up slightly */
+  transform: translateY(-10px);
+  
+  /* FIXED: Changed 'shadow' to 'box-shadow' */
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Arrow move animation */
+.card-hover-effect:hover .arrow-move {
+  display: inline-block; /* Ensure transform works on the arrow */
+  transform: translateX(5px);
+  transition: transform 0.3s ease;
+}
+
+/* Customize the React Calendar */
+.react-calendar {
+  width: 100% !important;
+  background: white;
+  border: none !important;
+  font-family: inherit;
+}
+
+.react-calendar__tile--active {
+  background: #0d6efd !important; /* Bootstrap Primary Blue */
+  color: white !important;
+  border-radius: 8px;
+}
+
+.react-calendar__tile--now {
+  background: #e9ecef !important; /* Light grey for today */
+  border-radius: 8px;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #f8f9fa;
+}
+
+
+.hover-bg-white {
+  transition: background-color 0.15s ease-in-out;
+}
+.hover-bg-white:hover {
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.dropdown-search-item {
+  transition: background-color 0.15s ease-in-out;
+}
+.dropdown-search-item:hover {
+  background-color: #f8f9fa !important;
+  cursor: pointer;
+}
+
+
+/* app/globals.css */
+
+/* ... your bootstrap and body styles stay the same ... */
+
+@theme {
+  /* We must name this keyframe loop "marqueeScroll" to match your component's inline arbitrary class! */
+  @keyframes marqueeScroll {
+    from { 
+      transform: translateX(0%); 
+    }
+    to { 
+      transform: translateX(-50%); /* Use -50% because you duplicated the items to fill the track */
+    }
+  }
+}
