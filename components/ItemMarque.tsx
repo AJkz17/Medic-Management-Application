@@ -4,7 +4,7 @@ const ItemMarquee = () => {
 
     return (
         <div className="overflow-hidden w-full relative max-w-7xl mx-auto select-none group sm:my-20">
-            <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-linear-to-r from-white to-transparent" />
+            <div className="absolute left-0 top-0 h-full w-40 z-10 pointer-events-none bg-linear-to-r from-white to-transparent" />
             
             {/* Kept your exact classes and style variables intact */}
             <div className="flex min-w-[200%] animate-[marqueeScroll_10s_linear_infinite] sm:animate-[marqueeScroll_40s_linear_infinite] group-hover:[animation-play-state:paused] gap-4" >

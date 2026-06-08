@@ -14,7 +14,7 @@ export const patientFeedback = [
     id: 2,
     name: "Sarah Jenkins",
     role: "Cardiology Patient",
-    image: "/Img/member-rami.jpg", // Replace with your other asset image paths as needed
+    image: "/Img/member-asa.jpg", // Replace with your other asset image paths as needed
     stars: "★★★★★",
     comment: "Excellent platform! It saved me from waiting on the line for hours. Highly recommend the doctor search tool."
   },
@@ -22,7 +22,7 @@ export const patientFeedback = [
     id: 3,
     name: "Dr. Michael Chen",
     role: "General Checkup",
-    image: "/Img/member-rami.jpg",
+    image: "/Img/member-rora.jpg",
     stars: "★★★★☆",
     comment: "Incredibly intuitive layout. Managing my family's weekly medical appointments has never been this stress-free."
   }
