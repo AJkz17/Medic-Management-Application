@@ -30,11 +30,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
    
   return (
     <html lang="en">
-      {/* min-vh-100 ensures the body is always at least the full height of the screen */}
+
       <body className="d-flex flex-column min-vh-100">
         <Navbar />
 
-        {/* flex-grow-1 makes the dashboard area expand to fill all empty space */}
+
         <main className="grow">
           {children}
           <Chatbot />

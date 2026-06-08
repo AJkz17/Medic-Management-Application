@@ -24,17 +24,8 @@ export default function RegisterPage() {
 
   return (
     <div className="container-fluid bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
-      
-      {/* ─── HIGHLIGHT 1: EXPANDED CARD CONTAINER ─── */}
-      {/* Removed padding (p-4) here, added overflow-hidden and widened maxWidth to 1000px */}
       <div className="card shadow-sm border-0 overflow-hidden" style={{ maxWidth: "1000px", width: "100%" }}>
-        
-        {/* ─── HIGHLIGHT 2: THE FLEX ROW WRAPPER ─── */}
-        {/* g-0 removes space between the image column and the form column */}
         <div className="row g-0 align-items-stretch">
-          
-          {/* ─── HIGHLIGHT 3: BRAND NEW IMAGE COLUMN ─── */}
-          {/* Takes exactly half the row width on medium screens and up. Hidden on mobile. */}
           <div className="col-md-6 d-none d-md-block position-relative">
             <img 
               src="/Img/register-medical.jpg" // Ensure this image path matches your public folder
@@ -42,8 +33,6 @@ export default function RegisterPage() {
               className="w-100 h-100 object-fit-cover"
             />
           </div>
-
-          {/* Moved the inner card padding here (p-4 p-md-5) so the form has breathing room */}
           <div className="col-md-6 p-4 p-md-5">
             <h2 className="text-primary fw-bold text-center mb-4">Patient Registration</h2>
             
@@ -102,9 +91,8 @@ export default function RegisterPage() {
               </button>
             </form>
           </div>
-
-        </div> {/* End of Row */}
-      </div> {/* End of Card */}
+        </div>
+      </div>
     </div>
   );
 }

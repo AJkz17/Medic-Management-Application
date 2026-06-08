@@ -124,7 +124,6 @@ export default function DashboardPage() {
                        }`}>
                     <div className="me-3 text-center" style={{ minWidth: '80px' }}>
                       <div className="fw-bold text-dark">
-                        {/* DISPLAY FIX: Remove the :00 seconds for the user */}
                         {app.appoint_time ? app.appoint_time.substring(0, 5) : 'TBD'}
                       </div>
                       <small className="text-muted" style={{ fontSize: '0.7rem' }}>Time Slot</small>

@@ -4,15 +4,16 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer className="mt-auto py-4" style={{
-      background: 'linear-gradient(to right, #121212, #363839)', // Dark Blue to Sky Blue
+      background: 'linear-gradient(to right, #121212, #363839)', // Gradeint Color Dark Blue to Sky Blue
       color: 'white'
     }}>
       <div className="container text-center">
         <div className="mb-2">
+
           {/* Copyright Section */}
           <p className="mb-3">&copy; {new Date().getFullYear()} Group C . All rights reserved.</p>
           <h6 className="font-bold text-gray-200 hover:text-blue-500 focus:text-blue-500 transition-colors duration-200 cursor-pointer"> 
-            Jee Kai Zhun
+            Jee Kai Zhun, Khong Bhoon Keat, Jones Leong, Sheng Lim
           </h6>
         </div>
         
