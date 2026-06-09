@@ -16,7 +16,6 @@ export default function LoginPage() {
     const result = await loginUser(formData);
 
     if (result.success) {
-      // 1. This tells the Navbar: "Hey, the cookie is here, go get the data!"
       router.refresh(); 
       
       setStatus({ 
@@ -24,7 +23,6 @@ export default function LoginPage() {
         isError: false 
       });
       
-      // 2. We use the dynamic path provided by the server (Admin vs Patient)
       setTimeout(() => {
         window.location.href = result.redirectTo || "/dashboard"; 
       }, 1000);
