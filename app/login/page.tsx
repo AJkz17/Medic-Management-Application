@@ -35,7 +35,6 @@ export default function LoginPage() {
   return (
     <div className="container-fluid bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
       <div className="card shadow-sm border-0 p-4" style={{ maxWidth: "400px", width: "100%" }}>
-        {/* Changed title to be neutral for both Admin and Patient */}
         <h2 className="text-primary fw-bold text-center mb-4">Medfix Login</h2>
         
         {status && (
