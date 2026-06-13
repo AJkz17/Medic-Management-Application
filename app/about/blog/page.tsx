@@ -16,7 +16,6 @@ const teamMembers = [
 export default function TeamPage() {
   return (
     <div className="container-fluid p-0 bg-white">
-      {/* 1. Header with Link Back */}
       <div className="bg-dark text-white py-5 position-relative">
         <div className="container position-relative" style={{ zIndex: 2 }}>
             <Link href="/about" className="btn btn-outline-info btn-sm mb-4 text-decoration-none">
@@ -43,8 +42,6 @@ export default function TeamPage() {
           </div>
         </div>
       </div>
-
-      {/* 2. THE 7 MEMBER BOXES */}
       <div className="container py-5">
         <h2 className="text-center text-primary fw-bold mb-5">Our Leaders</h2>
         <div className="row g-4 justify-content-center">
