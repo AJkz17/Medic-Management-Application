@@ -9,17 +9,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // 1. Fetch Bookings
         const resBookings = await fetch('/api/admin/dashboard');
         const bookingsData = await resBookings.json();
         setAppointments(bookingsData);
 
-        // 2. Fetch Doctor Stats (from the route we just updated)
         const resDocs = await fetch('/api/doctors');
         if (resDocs.ok) {
           const docsData = await resDocs.json();
           setTotalDoctors(docsData.totalDoctors); // Set the count from API
         }
+
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -37,7 +36,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="row g-4">
-        {/* Statistics Card: Total Bookings */}
         <div className="col-md-6">
           <div className="card shadow-sm border-0 p-3 bg-primary text-white text-center">
             <h6 className="text-uppercase small fw-bold opacity-75">Total Bookings</h6>
@@ -45,7 +43,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Statistics Card: Total Doctors (NEW BOX) */}
         <div className="col-md-6">
           <div className="card shadow-sm border-0 p-3 bg-success text-white text-center">
             <h6 className="text-uppercase small fw-bold opacity-75">Medical Staff</h6>
@@ -54,7 +51,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Management Table */}
       <div className="card shadow-sm border-0 mt-5">
         <div className="card-header bg-white py-3">
           <h5 className="mb-0 fw-bold">All Patient Appointments</h5>

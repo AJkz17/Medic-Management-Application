@@ -27,7 +27,7 @@ export default function AdminLeaveApprovalPage() {
         body: JSON.stringify({ id, status: statusCommand })
       });
       if (res.ok) {
-        fetchAllRequests(); // Reload items smoothly
+        fetchAllRequests();
       }
     } catch (e) {
       alert("Action failed");

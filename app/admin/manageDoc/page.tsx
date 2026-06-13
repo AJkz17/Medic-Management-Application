@@ -7,7 +7,6 @@ export default function ManageDoctors() {
     const [doctors, setDoctors] = useState<any[]>([]);
 
     const fetchDoctors = async () => {
-        // Pointing to the correct API endpoint path
         const res = await fetch('/api/admin/manageDoc', { cache: 'no-store' });
         const data = await res.json();
         setDoctors(Array.isArray(data) ? data : []);
@@ -28,8 +27,7 @@ export default function ManageDoctors() {
     return (
         <div className="container py-5">
             <h2 className="mb-4 fw-bold text-primary">Medical Staff Management</h2>
-            
-            {/* ADD DOCTOR FORM */}
+
             <div className="card p-4 mb-4 border-0 shadow-sm bg-light">
                 <h5 className="mb-3">Register New Doctor</h5>
                 <form action={async (fd) => await handleAction(addDoctor(fd))}>
@@ -67,7 +65,6 @@ export default function ManageDoctors() {
                 </form>
             </div>
 
-            {/* DOCTORS TABLE */}
             <div className="table-responsive bg-white p-3 rounded shadow-sm">
                 <table className="table table-hover align-middle">
                     <thead className="table-light">
@@ -86,16 +83,13 @@ export default function ManageDoctors() {
                                 <tr key={d.id}>
                                     <td>{d.id}</td>
                                     <td>
-                                        {/* Changed from d.username to d.name to match database headers */}
                                         <strong>{d.name}</strong><br/>
                                         <small className="text-muted">{d.email}</small>
                                     </td>
                                     <td>
                                         <span className="badge bg-info text-dark">{d.department}</span>
                                     </td>
-                                    {/* Changed from d.specialization to d.specialism to match database headers */}
                                     <td>{d.specialism}</td>
-                                    {/* Changed from d.phone_number to d.status to reflect data from database table */}
                                     <td>
                                         <span className={`badge ${d.status === 'Available' ? 'bg-success' : 'bg-warning text-dark'}`}>
                                             {d.status}
