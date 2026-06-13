@@ -9,7 +9,6 @@ export async function GET() {
             'SELECT id, name, email, password, department, specialism, status FROM doctors ORDER BY id ASC'
         );
 
-        // Return the rows directly as JSON so the frontend can map them
         return NextResponse.json(rows);
     } catch (error) {
         console.error("Fetch Error:", error);

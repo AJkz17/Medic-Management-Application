@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// GET: Fetch all doctor leave applications
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -19,7 +18,6 @@ export async function GET() {
   }
 }
 
-// PUT: Process approvals or rejections
 export async function PUT(request) {
   try {
     const cookieStore = await cookies();
@@ -27,7 +25,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { id, status } = await request.json(); // status values: 2 = Approve, 3 = Reject
+    const { id, status } = await request.json();
     await pool.query('UPDATE doctor_leaves SET status = ? WHERE id = ?', [status, id]);
 
     return NextResponse.json({ success: true, message: "Status updated successfully!" });
