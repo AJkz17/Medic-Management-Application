@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// Referencing your local assets saved inside public/Img/
+
 const images = [
   "/Img/medicWithCare.jpg",
   "/Img/MTI.jpg",
@@ -13,15 +13,14 @@ const images = [
 export default function ImageSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto-slide logic
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => 
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000); // Change image every 5 seconds
+    }, 5000); 
 
-    return () => clearInterval(timer); // Cleanup on unmount
+    return () => clearInterval(timer); 
   }, []);
 
   return (
@@ -42,12 +41,11 @@ export default function ImageSlider() {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{ objectFit: 'cover' }}
-            priority={index === 0} // Loads the first slide immediately to prevent layout shifts
+            priority={index === 0} 
           />
         </div>
       ))}
-      
-      {/* Dot Indicators */}
+
       <div className="position-absolute bottom-0 start-50 translate-middle-x mb-3" style={{ zIndex: 10 }}>
         {images.map((_, index) => (
           <span 
