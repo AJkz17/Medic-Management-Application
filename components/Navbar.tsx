@@ -92,7 +92,6 @@ export default function Navbar() {
   // Calculate distinct aggregated volume items count
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // --- RENDER: ADMIN NAVBAR ---
   if (isLoggedIn && role === 'admin') {
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-danger shadow-sm px-4 sticky-top">
@@ -111,8 +110,7 @@ export default function Navbar() {
       </nav>
     );
   }
-
-  // --- RENDER: DOCTOR NAVBAR ---
+  
   if (isLoggedIn && role === 'doctor') {
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm px-4 sticky-top">
@@ -132,7 +130,6 @@ export default function Navbar() {
     );
   }
 
-  // --- RENDER: PATIENT NAVBAR ---
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm px-4 sticky-top">
@@ -157,14 +154,11 @@ export default function Navbar() {
           </ul>
         </div>
 
-        {/* RIGHT SIDE CONTAINER: Cart & Profile Identity actions */}
         <div className="d-flex align-items-center gap-3">
-          
-          {/* --- DYNAMIC CART ICON LINKED TO OVERLAY MODAL --- */}
           {isLoggedIn && (
             <div className="position-relative">
               <button 
-                onClick={() => setIsCartOpen(true)} // 4. Click opens the blurred overlay modal
+                onClick={() => setIsCartOpen(true)} 
                 className="btn btn-link position-relative p-0 text-decoration-none text-white opacity-75 hover-opacity-100 transition-all shadow-none d-block"
                 title="View Cart"
               >
@@ -179,7 +173,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Profile Action Elements */}
           {isLoggedIn ? (
             <button onClick={() => setIsProfileOpen(true)} className="btn btn-link text-white d-flex align-items-center gap-2 text-decoration-none shadow-none p-0">
               <i className="bi bi-person-circle" style={{ fontSize: '1.5rem' }}></i>
@@ -202,7 +195,6 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* --- RENDERED OVERLAY CART MODAL VIEW WITH CENTRAL LAYOUT --- */}
       {isCartOpen && (
         <CartModal 
           onClose={() => setIsCartOpen(false)}
