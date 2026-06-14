@@ -18,7 +18,6 @@ export default function Wallet() {
     }
         fetchPoints();
     }, []);
-
   return (
     <div className="card bg-white p-4 rounded shadow-sm border-0">
       <div className="d-flex align-items-center justify-content-between mb-2">
