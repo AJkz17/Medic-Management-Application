@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function registerUser(formData: FormData) {
-  // 1. Extract data from the form
   const username = formData.get('username');
   const password = formData.get('password');
   const icNumber = formData.get('icNumber');
@@ -17,7 +16,6 @@ export async function registerUser(formData: FormData) {
 
   
   try {
-    // 2. Execute the SQL Query
     const [result] = await pool.query(
       `INSERT INTO users (username, password, ic_number, blood_type, email, phone_number, age) 
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -28,7 +26,6 @@ export async function registerUser(formData: FormData) {
   } catch (error: any) {
     console.error("Database Error:", error);
     
-    // Handle duplicate entry errors (e.g., same IC or Email)
     if (error.code === 'ER_DUP_ENTRY') {
       return { success: false, message: "Email or IC Number already registered." };
     }
@@ -47,7 +44,6 @@ export async function loginUser(formData: FormData) {
   cookieStore.delete('role');
 
   try {
-    // 1. FIRST CHECK: Admin Table
     const [adminRows]: any = await pool.query(
       'SELECT id FROM admin WHERE email = ? AND password = ?',
       [email, password]
@@ -61,7 +57,6 @@ export async function loginUser(formData: FormData) {
       return { success: true, message: "Admin Login Successful!", redirectTo: '/admin/dashboard' };
     }
 
-    // 2. SECOND CHECK: Doctor Table (Moved up to prioritize staff)
     const [doctorRows]: any = await pool.query(
       'SELECT id FROM doctors WHERE email = ? AND password = ?',
       [email, password]
@@ -103,7 +98,6 @@ export async function loginUser(formData: FormData) {
 export async function logoutUser() {
     const cookieStore = await cookies();
     
-    // Explicitly delete with the same path used to create them
     cookieStore.delete({ name: 'user_id', path: '/' });
     cookieStore.delete({ name: 'role', path: '/' });
     
@@ -115,25 +109,22 @@ export async function bookAppointment(formData: FormData) {
     const cookieStore = await cookies();
     const userId = cookieStore.get('user_id');
 
-    // Security check
     if (!userId?.value) {
       return { success: false, message: "Session expired. Please login again." };
     }
 
-    // 1. GET ALL DATA FROM FORM
+
     const appoint_date = formData.get('appoint_date'); 
     const department = formData.get('department');
     const doctor_id = formData.get('doctor_id'); // Make sure you grab this too!
     let appoint_time = formData.get('appoint_time') as string;
     const appoint_status = 1; 
 
-    // 2. THE TIME FIX ( Same format with databases)
     if (appoint_time && appoint_time.length === 5) {
         appoint_time = `${appoint_time}:00`;
     }
 
-
-    // Check if THIS user already has an appointment at this exact date and time
+    // Check if  user already has an appointment at this exact date and time
     const [existing]: any = await pool.query(
       'SELECT id FROM appointment WHERE user_id = ? AND appoint_date = ? AND appoint_time = ? AND appoint_status != 3',
       [userId.value, appoint_date, appoint_time]
@@ -146,8 +137,6 @@ export async function bookAppointment(formData: FormData) {
       };
     }
 
-    
-    // 3. UPDATED SQL: Added doctor_id and appoint_time
     await pool.query(
       `INSERT INTO appointment 
        (user_id, doctor_id, appoint_date, appoint_time, appoint_status, department) 
@@ -155,7 +144,6 @@ export async function bookAppointment(formData: FormData) {
       [userId.value, doctor_id, appoint_date, appoint_time, appoint_status, department]
     );
 
-    // 4. CLEAR CACHE: This forces the dashboard to show the new data immediately
     revalidatePath('/dashboard');
     
     return { success: true, message: "Appointment booked successfully!" };
@@ -190,15 +178,13 @@ export async function deletePatient(id:number) {
 }
 
 
-//Update Patient
+// Update Patient
 export async function updatePatientInfo(id: number, age: string, blood: string) {
     await pool.query('UPDATE users SET age = ?, blood_type = ? WHERE id = ?', [age, blood, id]);
     return { success: true };
 }
 
-// lib/actions.ts
-
-// 1. REGISTER/ADD DOCTOR
+// register new doctor
 export async function addDoctor(formData: FormData) {
     const name = formData.get('name');
     const email = formData.get('email');
@@ -213,7 +199,6 @@ export async function addDoctor(formData: FormData) {
     return { success: true };
 }
 
-// 2. UPDATE DOCTOR
 export async function updateDoctor(formData: FormData) {
     const id = formData.get('id');
     const name = formData.get('name');
@@ -226,8 +211,7 @@ export async function updateDoctor(formData: FormData) {
     );
     return { success: true };
 }
-
-// 3. DELETE DOCTOR
+// Delete doctor
 export async function deleteDoctor(id: number) {
     await pool.query('DELETE FROM doctors WHERE id = ?', [id]);
     return { success: true };
@@ -235,7 +219,6 @@ export async function deleteDoctor(id: number) {
 
 export async function updateDoctorStatus(id: number, status: string) {
     try {
-        // We use a parameterized query to prevent SQL injection
         await pool.query(
             'UPDATE doctors SET status = ? WHERE id = ?',
             [status, id]
@@ -254,7 +237,6 @@ export async function updateBookingStatus(id: number, status: number) {
       'UPDATE appointment SET appoint_status = ? WHERE id = ?',
       [status, id]
     );
-    // You MUST return an object that contains 'success'
     return { success: true }; 
   } catch (error) {
     console.error(error);
@@ -262,14 +244,13 @@ export async function updateBookingStatus(id: number, status: number) {
   }
 }
 
-// NEW: Claiming function
+
 export async function claimAppointment(appointmentId: number, doctorId: string) {
     try {
         await pool.query(
             'UPDATE appointment SET doctor_id = ?, appoint_status = 1 WHERE id = ?',
             [doctorId, appointmentId]
         );
-        // Explicitly return this object
         return { success: true, message: "Appointment claimed successfully" };
     } catch (error: any) {
         console.error(error);
@@ -277,19 +258,14 @@ export async function claimAppointment(appointmentId: number, doctorId: string) 
     }
 }
 
-// lib/actions.ts
 export async function createBooking(formData: FormData) {
     const cookieStore = await cookies();
     const userId = cookieStore.get('user_id')?.value;
-    
-    // 1. Standard retrieval
     const department = formData.get('department');
     const doctorId = formData.get('doctor_id');
     const date = formData.get('appoint_date');
     let time = formData.get('appoint_time') as string;
 
-    // 2. THE MIRROR ADJUSTMENT: 
-    // HTML time inputs send "10:00", but MySQL TIME columns usually want "10:00:00"
     if (time && time.length === 5) {
         time = `${time}:00`; 
     }
@@ -298,7 +274,6 @@ export async function createBooking(formData: FormData) {
 
     try {
         await pool.query(
-            // Ensure this list exactly matches your phpMyAdmin column order
             `INSERT INTO appointment (user_id, doctor_id, department, appoint_date, appoint_time, appoint_status) 
              VALUES (?, ?, ?, ?, ?, 1)`,
             [userId, doctorId, department, date, time]
@@ -313,7 +288,7 @@ export async function createBooking(formData: FormData) {
 export async function applyDoctorLeave(formData: FormData) {
   try {
     const cookieStore = await cookies();
-    const doctorId = cookieStore.get('doctor_id')?.value; // Assuming you store doctor_id in cookies
+    const doctorId = cookieStore.get('doctor_id')?.value;
 
     if (!doctorId) return { success: false, message: "Unauthorized." };
 
@@ -345,7 +320,6 @@ export async function submitFeedback(formData: FormData) {
     try {
         const cookieStore = await cookies();
         
-        // 2. Extract the logged-in patient's ID and name from session cookies
         const sessionUserId = cookieStore.get('user_id')?.value;
         const sessionUsername = cookieStore.get('username')?.value || 'Anonymous Patient';
 
@@ -353,7 +327,6 @@ export async function submitFeedback(formData: FormData) {
         const rating = formData.get('rating') as string;
         const comments = formData.get('comments') as string;
 
-        // Security check: Ensure the user is actually logged in
         if (!sessionUserId) {
             return { success: false, message: "Session expired. Please log in again." };
         }
@@ -361,15 +334,13 @@ export async function submitFeedback(formData: FormData) {
         if (!doctorId || !rating || rating === '0') {
             return { success: false, message: "Missing doctor selection or rating." };
         }
-
-        // 3. Insert into database using the valid session data
         await pool.query(
             `INSERT INTO feedback (user_id, username, doctor_id, rating, comments) 
              VALUES (?, ?, ?, ?, ?)`,
             [
-                parseInt(sessionUserId), // Matches fk_feedback_user
+                parseInt(sessionUserId),
                 sessionUsername, 
-                parseInt(doctorId),      // Matches fk_feedback_doctor
+                parseInt(doctorId),      
                 parseInt(rating), 
                 comments
             ]
