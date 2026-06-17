@@ -6,8 +6,8 @@ import 'react-calendar/dist/Calendar.css';
 import AppointmentModal from "./appointmentModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import Chatbot from "@/components/Chatbot"; // Import Chatbot Component
-import Advertise from "@/components/AdvertisingSlider"; //Import advertise component
+import Chatbot from "@/components/Chatbot"; 
+import Advertise from "@/components/AdvertisingSlider"; 
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,19 +36,31 @@ export default function DashboardPage() {
     fetchAppointments();
   }, []);
 
-  // HELPER: Convert any date object to a "YYYY-MM-DD" string without timezone shifting
   const formatDateString = (date: Date | string) => {
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!date) return '';
+    if (typeof date === 'string') {
+      const rawDatePart = date.split('T')[0]; 
+      if (date.includes('T16:00:00') || date.includes('16:00:00')) {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return rawDatePart;
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
-  // Filter: Shows all bookings for the clicked date
+  {/* LEFT & CENTER COMBINED SECTION */}
   const dailyAgenda = appointments.filter(app => {
     if (!app || !app.appoint_date) return false;
     return formatDateString(app.appoint_date) === formatDateString(selectedDate);
   });
 
-  // Highlight Logic
   const getTileClass = ({ date, view }: { date: Date, view: string }) => {
     if (view !== 'month') return '';
     
@@ -73,7 +85,6 @@ export default function DashboardPage() {
 
       <h2 className="mb-4 text-primary fw-bold">Patient Dashboard</h2>
       
-      {/* Calendar and Appointment List */}
       <div className="row g-4 mb-5">
         <div className="col-lg-5">
           <div className="card shadow-sm border-0 p-4 h-100">
@@ -101,7 +112,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-
+        {/* MY APPOINTMENTS HISTORY COLUMN */}
         <div className="col-lg-7">
           <div className="card shadow-sm border-0 p-4 h-100">
             <div className="d-flex justify-content-between align-items-center mb-4">
