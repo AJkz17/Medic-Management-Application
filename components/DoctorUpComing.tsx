@@ -36,7 +36,7 @@ const DoctorUpcoming: React.FC = () => {
   return (
     <div className="card shadow border-0 p-2 h-100">
       <h6 className="fw-bold text-dark mb-2 text-uppercase tracking-wider text-muted" style={{ fontSize: '11px' }}>
-        Upcoming Booked Slots
+        Doctor Upcoming Booked Slots
       </h6>
       
       {loading ? (
