@@ -20,7 +20,7 @@ export default function AppointmentPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const doctorsRes = await fetch('/api/doctors'); 
+      const doctorsRes = await fetch('/api/doctor'); 
       if (doctorsRes.ok) {
         const doctorsData = await doctorsRes.json();
         const list = Array.isArray(doctorsData.doctors) ? doctorsData.doctors : Array.isArray(doctorsData) ? doctorsData : [];
