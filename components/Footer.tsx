@@ -13,7 +13,7 @@ export default function Footer() {
           {/* Copyright Section */}
           <p className="mb-3">&copy; {new Date().getFullYear()} Group C . All rights reserved.</p>
           <h6 className="font-bold text-gray-200 hover:text-blue-500 focus:text-blue-500 transition-colors duration-200 cursor-pointer"> 
-            Jee Kai Zhun, Khong Bhoon Keat, Jones Leong, Sheng Lim
+            Jee Kai Zhun, Ler Jun Xiang, James Leong, Sheng Lim
           </h6>
         </div>
         
