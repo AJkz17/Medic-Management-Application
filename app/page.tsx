@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ItemMarquee from '@/components/ItemMarque';
 import FeedbackDisplay from '@/components/FeedbackDisplay';
+import Clinic from '@/components/ClinicMap';
 
 export default function Home() {
   return (
@@ -63,6 +64,9 @@ export default function Home() {
       
       {/* Feedback section */}
       <FeedbackDisplay />
+
+      {/* Clinic Map section */}
+      <Clinic />
     </div>
   );
 }
