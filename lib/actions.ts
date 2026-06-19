@@ -4,6 +4,8 @@ import { pool } from './db';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export async function registerUser(formData: FormData) {
   const username = formData.get('username');
@@ -34,54 +36,122 @@ export async function registerUser(formData: FormData) {
   }
 }
 
+
 export async function loginUser(formData: FormData) {
   const email = formData.get('email');
-  const password = formData.get('password');
+  const password = formData.get('password') as string;
   const cookieStore = await cookies();
 
   // --- AUTOMATIC CLEAN SLATE ---
-  cookieStore.delete('user_id');
-  cookieStore.delete('role');
+  cookieStore.delete('auth_token');
 
   try {
+    // --- 1. FIRST CHECK: Admin Table ---
     const [adminRows]: any = await pool.query(
-      'SELECT id FROM admin WHERE email = ? AND password = ?',
-      [email, password]
+      'SELECT id, password FROM admin WHERE email = ?',
+      [email]
     );
 
     if (adminRows.length > 0) {
-      const adminId = adminRows[0].id.toString();
-      cookieStore.set('user_id', adminId, { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
-      cookieStore.set('role', 'admin', { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
+      const admin = adminRows[0];
       
-      return { success: true, message: "Admin Login Successful!", redirectTo: '/admin/dashboard' };
+      // Attempt bcrypt match first
+      let isPasswordValid = await bcrypt.compare(password, admin.password);
+      
+      // Fallback: If it's not a bcrypt hash yet, check plain-text directly
+      if (!isPasswordValid && !admin.password.startsWith('$2a$')) {
+        isPasswordValid = (password === admin.password);
+      }
+      
+      if (isPasswordValid) {
+        const token = jwt.sign(
+          { userId: admin.id.toString(), role: 'admin' },
+          process.env.JWT_SECRET || 'fallback_secret',
+          { expiresIn: '1d' }
+        );
+
+        cookieStore.set('auth_token', token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24
+        });
+
+        return { success: true, message: "Admin Login Successful!", redirectTo: '/admin/dashboard' };
+      }
     }
 
+    // --- 2. SECOND CHECK: Doctors Table ---
     const [doctorRows]: any = await pool.query(
-      'SELECT id FROM doctors WHERE email = ? AND password = ?',
-      [email, password]
+      'SELECT id, password FROM doctors WHERE email = ?',
+      [email]
     );
 
     if (doctorRows.length > 0) {
-      const doctorId = doctorRows[0].id.toString();
-      cookieStore.set('user_id', doctorId, { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
-      cookieStore.set('role', 'doctor', { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
+      const doctor = doctorRows[0];
       
-      return { success: true, message: "Doctor Login Successful!", redirectTo: '/doctor/dashboard' };
+      // Attempt bcrypt match first
+      let isPasswordValid = await bcrypt.compare(password, doctor.password);
+
+      // Fallback: If it's not a bcrypt hash yet, check plain-text directly
+      if (!isPasswordValid && !doctor.password.startsWith('$2a$')) {
+        isPasswordValid = (password === doctor.password);
+      }
+
+      if (isPasswordValid) {
+        const token = jwt.sign(
+          { userId: doctor.id.toString(), role: 'doctor' },
+          process.env.JWT_SECRET || 'fallback_secret',
+          { expiresIn: '1d' }
+        );
+
+        cookieStore.set('auth_token', token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24
+        });
+
+        return { success: true, message: "Doctor Login Successful!", redirectTo: '/doctor/dashboard' };
+      }
     }
 
-    // 3. THIRD CHECK: Users (Patients) Table
+    // --- 3. THIRD CHECK: Users (Patients) Table ---
     const [userRows]: any = await pool.query(
-      'SELECT id, username FROM users WHERE email = ? AND password = ?',
-      [email, password]
+      'SELECT id, password FROM users WHERE email = ?',
+      [email]
     );
 
     if (userRows.length > 0) {
-      const userId = userRows[0].id.toString();
-      cookieStore.set('user_id', userId, { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
-      cookieStore.set('role', 'patient', { path: '/', httpOnly: true, maxAge: 60 * 60 * 24 });
+      const user = userRows[0];
+      
+      // Attempt bcrypt match first
+      let isPasswordValid = await bcrypt.compare(password, user.password);
 
-      return { success: true, message: "Login Successful! Redirecting...", redirectTo: '/dashboard' };
+      // Fallback: If it's not a bcrypt hash yet, check plain-text directly
+      if (!isPasswordValid && !user.password.startsWith('$2a$')) {
+        isPasswordValid = (password === user.password);
+      }
+
+      if (isPasswordValid) {
+        const token = jwt.sign(
+          { userId: user.id.toString(), role: 'patient' },
+          process.env.JWT_SECRET || 'fallback_secret',
+          { expiresIn: '1d' }
+        );
+
+        cookieStore.set('auth_token', token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24
+        });
+
+        return { success: true, message: "Login Successful! Redirecting...", redirectTo: '/dashboard' };
+      }
     }
 
     return { success: false, message: "Invalid email or password." };
