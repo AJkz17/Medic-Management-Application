@@ -45,9 +45,19 @@ export default function AppointmentPage() {
 
   useEffect(() => { fetchData(); }, []);
 
+  // FIXED: Formats local dates to YYYY-MM-DD string without UTC shifting
+  const getLocalDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   async function handleSubmit(formData: FormData) {
     if (selectedDate) {
-      formData.set('appoint_date', selectedDate.toISOString().split('T')[0]);
+      // FIXED: Use local calendar string instead of selectedDate.toISOString()
+      const cleanLocalDate = getLocalDateString(selectedDate);
+      formData.set('appoint_date', cleanLocalDate);
     }
     const result = await createBooking(formData);
     if (result.success) {
@@ -65,6 +75,20 @@ export default function AppointmentPage() {
       case 3: return <span className="badge bg-danger">Rejected</span>;
       default: return <span className="badge bg-secondary">Unknown</span>;
     }
+  };
+
+  // FIXED: Parses incoming DB strings directly into DD/MM/YYYY format safely
+  const renderTimezoneSafeDate = (dateVal: string | Date) => {
+    if (!dateVal) return '';
+    if (typeof dateVal === 'string') {
+      const cleanString = dateVal.split('T')[0];
+      if (cleanString.includes('-')) {
+        const [year, month, day] = cleanString.split('-');
+        return `${day}/${month}/${year}`;
+      }
+      return cleanString;
+    }
+    return dateVal.toLocaleDateString('en-GB');
   };
 
   return (
@@ -140,7 +164,7 @@ export default function AppointmentPage() {
                               <small className="text-muted text-xs">Dept: {item.department || 'General'}</small>
                             </td>
                             <td className="small">
-                              <div>{new Date(item.appoint_date).toLocaleDateString('en-GB')}</div>
+                              <div>{renderTimezoneSafeDate(item.appoint_date)}</div>
                               <small className="text-muted">{item.appoint_time}</small>
                             </td>
                             <td>{getStatusBadge(item.appoint_status)}</td>
