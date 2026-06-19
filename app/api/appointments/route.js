@@ -1,6 +1,7 @@
 import { pool } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +10,6 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const doctorId = searchParams.get('doctor_id');
 
-    // --- CASE 1: IF AN EXPLICIT DOCTOR ID IS PROVIDED (DOCTOR SCHEDULE LOOKUP) ---
     if (doctorId) {
       const [rows] = await pool.query(
         `SELECT 
@@ -26,9 +26,15 @@ export async function GET(request) {
       return NextResponse.json(rows);
     }
 
-    // --- CASE 2: NO DOCTOR ID (PATIENT DASHBOARD CALENDAR VIEW OVERVIEW) ---
     const cookieStore = await cookies();
-    const userId = cookieStore.get('user_id')?.value;
+    const token = cookieStore.get('auth_token')?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    const userId = decoded.userId;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
