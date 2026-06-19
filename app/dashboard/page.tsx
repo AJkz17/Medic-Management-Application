@@ -7,7 +7,8 @@ import AppointmentModal from "./appointmentModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Chatbot from "@/components/Chatbot"; 
-import Advertise from "@/components/AdvertisingSlider"; 
+import Advertise from "@/components/AdvertisingSlider";
+import ItemMarquee from "@/components/ItemMarque";
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,6 +16,19 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+
+  const fetchUserProfile = async () => {
+    try {
+      const res = await fetch('/api/users');
+      if (res.ok) {
+        const data = await res.json();
+        setUserData(data);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
   const fetchAppointments = async () => {
     try {
@@ -33,6 +47,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setIsMounted(true);
+    fetchUserProfile();
     fetchAppointments();
   }, []);
 
@@ -55,7 +70,6 @@ export default function DashboardPage() {
     return `${year}-${month}-${day}`;
   };
 
-  {/* LEFT & CENTER COMBINED SECTION */}
   const dailyAgenda = appointments.filter(app => {
     if (!app || !app.appoint_date) return false;
     return formatDateString(app.appoint_date) === formatDateString(selectedDate);
@@ -83,7 +97,9 @@ export default function DashboardPage() {
       
       <Advertise />
 
-      <h2 className="mb-4 text-primary fw-bold">Patient Dashboard</h2>
+      <div className="mb-4">
+        <h2 className="text-primary fw-bold m-0">Patient Dashboard</h2>
+      </div>
       
       <div className="row g-4 mb-5">
         <div className="col-lg-5">
@@ -112,7 +128,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* MY APPOINTMENTS HISTORY COLUMN */}
         <div className="col-lg-7">
           <div className="card shadow-sm border-0 p-4 h-100">
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -127,12 +142,7 @@ export default function DashboardPage() {
                 <p className="text-center py-5 text-muted small">Loading records...</p>
               ) : dailyAgenda.length > 0 ? (
                 dailyAgenda.map((app) => (
-                  <div key={app.id} 
-                       className={`d-flex align-items-center p-3 mb-3 rounded border-start border-4 shadow-sm ${
-                         app.appoint_status === 2 ? 'border-success bg-success-subtle' : 
-                         app.appoint_status === 3 ? 'border-danger bg-danger-subtle' : 
-                         'border-warning bg-warning-subtle'
-                       }`}>
+                  <div key={app.id} className={`d-flex align-items-center p-3 mb-3 rounded border-start border-4 shadow-sm ${ app.appoint_status === 2 ? 'border-success bg-success-subtle' : app.appoint_status === 3 ? 'border-danger bg-danger-subtle' : 'border-warning bg-warning-subtle' }`}>
                     <div className="me-3 text-center" style={{ minWidth: '80px' }}>
                       <div className="fw-bold text-dark">
                         {app.appoint_time ? app.appoint_time.substring(0, 5) : 'TBD'}
@@ -167,6 +177,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      <ItemMarquee />
+      
       {isModalOpen && (
         <AppointmentModal onClose={() => {
           setIsModalOpen(false);
