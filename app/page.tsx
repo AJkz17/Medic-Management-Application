@@ -3,11 +3,12 @@ import Image from 'next/image';
 import ItemMarquee from '@/components/ItemMarque';
 import FeedbackDisplay from '@/components/FeedbackDisplay';
 import Clinic from '@/components/ClinicMap';
+import OverviewStats from '@/components/OverviewStats';
 
 export default function Home() {
   return (
     <div className="container-fluid p-0 m-0 bg-white">
-      {/* 1. Top Image */}
+      {/* Banner */}
       <div className="w-100 position-relative" style={{ height: '400px' }}>
         <Image 
           src="/Img/Slider.png" 
@@ -18,7 +19,7 @@ export default function Home() {
         />
       </div>
 
-      {/* 2. Welcome Content Area */}
+      {/* Welcome Content Area */}
       <div className="d-flex flex-column align-items-center justify-content-center py-5 border-bottom">
         <h1 className="text-primary fw-bold mb-3">Welcome to Medfix</h1>
         <p className="text-secondary text-center mb-4 px-3" style={{ maxWidth: '700px' }}>
@@ -30,7 +31,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3. NEW: Vision & Mission Section */}
+      <OverviewStats />
+
+      {/*Vision & Mission Section */}
       <div className="bg-light py-5">
         <div className="container">
           <div className="row g-5 align-items-center">
