@@ -24,7 +24,7 @@ export default function ProfileModal({ user, onClose, onLogout }: { user: any; o
   };
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+    <div className="position-fixed top-0 inset-s-0-0 w-100 h-100 d-flex align-items-center justify-content-center" 
          style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1100 }}>
       
       <div className="card shadow-lg border-0 p-4" style={{ width: '100%', maxWidth: '450px' }}>
