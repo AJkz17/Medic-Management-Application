@@ -177,16 +177,27 @@ export async function logoutUser() {
 export async function bookAppointment(formData: FormData) {
   try {
     const cookieStore = await cookies();
-    const userId = cookieStore.get('user_id');
+    
+    // 1. Fetch your actual secure authentication token cookie
+    const token = cookieStore.get('auth_token')?.value;
 
-    if (!userId?.value) {
+    if (!token) {
       return { success: false, message: "Session expired. Please login again." };
     }
 
+    // 2. Decode the JWT token to safely read the user's identity on the server
+    let userId: string;
+    try {
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+      userId = decoded.userId; // Make sure this property name matches your login token payload layout
+    } catch (jwtError) {
+      return { success: false, message: "Invalid session credentials. Please log in again." };
+    }
 
+    // 3. Extract parameters from incoming FormData object
     const appoint_date = formData.get('appoint_date'); 
     const department = formData.get('department');
-    const doctor_id = formData.get('doctor_id'); // Make sure you grab this too!
+    const doctor_id = formData.get('doctor_id'); 
     let appoint_time = formData.get('appoint_time') as string;
     const appoint_status = 1; 
 
@@ -194,10 +205,10 @@ export async function bookAppointment(formData: FormData) {
         appoint_time = `${appoint_time}:00`;
     }
 
-    // Check if  user already has an appointment at this exact date and time
+    // Check if user already has an appointment at this exact date and time
     const [existing]: any = await pool.query(
       'SELECT id FROM appointment WHERE user_id = ? AND appoint_date = ? AND appoint_time = ? AND appoint_status != 3',
-      [userId.value, appoint_date, appoint_time]
+      [userId, appoint_date, appoint_time]
     );
 
     if (existing.length > 0) {
@@ -207,11 +218,12 @@ export async function bookAppointment(formData: FormData) {
       };
     }
 
+    // 4. Perform database SQL insertion using verified userId
     await pool.query(
       `INSERT INTO appointment 
        (user_id, doctor_id, appoint_date, appoint_time, appoint_status, department) 
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [userId.value, doctor_id, appoint_date, appoint_time, appoint_status, department]
+      [userId, doctor_id, appoint_date, appoint_time, appoint_status, department]
     );
 
     revalidatePath('/dashboard');
