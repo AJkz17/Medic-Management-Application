@@ -2,22 +2,33 @@ import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { pool } from "@/lib/db";
 import Link from 'next/link';
+import jwt from 'jsonwebtoken';
 
 export default async function Profile() {
     // 1. Session Protection
     const cookieStore = await cookies();
-    const userId = cookieStore.get('user_id');
-    
-    if (!userId) {
+    const token = cookieStore.get('auth_token')?.value;
+
+    if (!token) {
+        redirect('/login');
+    }
+
+    let userId: string;
+    try {
+        const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+        if (decoded.role !== 'patient') {
+            redirect('/login');
+        }
+        userId = decoded.userId;
+    } catch {
         redirect('/login');
     }
 
     try {
         // 2. Database Query with Error Handling
-        // Fetches username, email, IC, blood type, phone, and age
         const [rows]: any = await pool.query(
             'SELECT username, email, ic_number, blood_type, phone_number, age FROM users WHERE id = ?',
-            [userId.value]
+            [userId]
         );
 
         if (rows.length === 0) {
