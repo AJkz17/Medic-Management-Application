@@ -1,22 +1,30 @@
 import { pool } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 export async function GET() {
-    const cookieStore = await cookies();
-    const docId = cookieStore.get('user_id')?.value;
-
     try {
-        // 1. Total Appointments assigned to this doctor
-        const [total]= await pool.query(
+        const cookieStore = await cookies();
+        const token = cookieStore.get('auth_token')?.value;
+
+        if (!token) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+        if (decoded.role !== 'doctor') {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const docId = decoded.userId;
+
+        const [total] = await pool.query(
             'SELECT COUNT(*) as count FROM appointment WHERE doctor_id = ?', [docId]
         );
-        // 2. Pending Appointments (Status 1)
         const [pending] = await pool.query(
             'SELECT COUNT(*) as count FROM appointment WHERE doctor_id = ? AND appoint_status = 1', [docId]
         );
-        // 3. Today's Appointments
-        const [today]= await pool.query(
+        const [today] = await pool.query(
             'SELECT COUNT(*) as count FROM appointment WHERE doctor_id = ? AND appoint_date = CURDATE()', [docId]
         );
 
