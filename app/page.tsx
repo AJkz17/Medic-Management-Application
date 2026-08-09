@@ -34,30 +34,41 @@ export default function Home() {
       <OverviewStats />
 
       {/*Vision & Mission Section */}
-      <div className="bg-light py-5">
+      <div className="bg-light py-5 overflow-hidden">
         <div className="container">
-          <div className="row g-5 align-items-center">
-            <div className="col-md-6">
+          <div className="row g-5 align-items-stretch">
+            
+            {/* Vision */}
+            <div className="col-md-6 vision-animation">
               <div className="p-4 bg-white shadow-sm rounded-4 h-100">
                 <h3 className="text-primary fw-bold mb-3">Our Vision</h3>
+
                 <p className="text-secondary mb-0">
-                  To revolutionize the patient experience by creating a world where 
-                  healthcare is just a click away, making medical accessibility 
+                  To revolutionize the patient experience by creating a world where
+                  healthcare is just a click away, making medical accessibility
                   completely seamless and borderless for every community.
                 </p>
               </div>
             </div>
-            <div className="col-md-6">
+
+            {/* Mission */}
+            <div className="col-md-6 mission-animation">
               <div className="p-4 bg-white shadow-sm rounded-4 h-100 border-start border-primary border-5">
                 <h3 className="text-primary fw-bold mb-3">Our Mission</h3>
+
                 <p className="text-secondary mb-0">
-                  Our mission is to empower patients with the tools to **effortlessly 
-                  schedule, manage, and track their medical bookings in real-time**. 
-                  By eliminating administrative hurdles, we provide a more convenient 
-                  path to wellness through organized and transparent healthcare management.
+                  Our mission is to empower patients with the tools to{" "}
+                  <strong>
+                    effortlessly schedule, manage, and track their medical bookings
+                    in real-time
+                  </strong>
+                  . By eliminating administrative hurdles, we provide a more
+                  convenient path to wellness through organized and transparent
+                  healthcare management.
                 </p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
