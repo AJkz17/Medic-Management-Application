@@ -1,17 +1,22 @@
 import { pool } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-
+import jwt from 'jsonwebtoken';
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const docId = cookieStore.get('user_id')?.value;
+    const token = cookieStore.get('auth_token')?.value;
 
-    if (!docId) {
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    if (decoded.role !== 'doctor') {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const docId = decoded.userId;
 
     // Fetches appointments for this doctor OR unassigned ones
     const [rows] = await pool.query(`
